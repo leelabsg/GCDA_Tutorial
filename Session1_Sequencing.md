@@ -5,37 +5,36 @@
 In this session, we will learn how to convert raw unmapped read files (`FASTQ`) to analysis-ready files (`VCF`). \
 The overall process in this session is based on the [GATK Best Practice](https://gatk.broadinstitute.org/hc/en-us/categories/360002302312-Getting-Started). \
 This document was created on March 15, 2022 and the following contents were tested on the GSDS cluster (Ubuntu 18.04 LTS).
+### 0. Installing Linux and Anaconda in Windows
+Using Linux has become easy in Windows with WSL. \
+To start, launch windows powershell in administration mode and run following. 
+``` 
+wsl --install
+```
+After system restart, linux can be run from terminal app. (Note that hard drive is mounted under /mnt)
 
+```
+
+# find latest release for Linux-x86 and copy link from https://www.anaconda.com/products/distribution
+wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
+
+# install anaconda by running bash and follow instructions
+bash Anaconda3-2022.10-Linux-x86_64.sh
+
+```
 ### 1. Setting up the environment
 
 We will use the Anaconda environment on the GSDS cluster. \
 It is already created on the GSDS cluster, but you can create the environment on your local machine with the following command:
 
 ```
-# Create conda environment
-conda create -n SEQ
+# Create conda environment and install softwares (OpenJDK, samtools, GATK, BWA)
+conda create -n SEQ openjdk samtools gatk4 bwa -c anaconda -c bioconda
 conda activate SEQ
-```
 
-And you need to download some softwares. (These are also already installed.)
+# Download Picard (Find Latest Release: https://github.com/broadinstitute/picard/releases/latest)
+wget https://github.com/broadinstitute/picard/releases/download/3.0.0/picard.jar
 
-```
-# Install OpenJDK (Java) and samtools
-conda install -c anaconda openjdk
-conda install -c bioconda samtools
-
-# Download Picard
-wget https://github.com/broadinstitute/picard/releases/download/2.26.11/picard.jar
-
-# Download GATK
-wget https://github.com/broadinstitute/gatk/releases/download/4.2.5.0/gatk-4.2.5.0.zip
-unzip gatk-4.2.5.0.zip
-export PATH="/PATH_TO_gatk-4.2.5.0/:$PATH"
-
-# Download Burrows-Wheeler Aligner (BWA)
-git clone https://github.com/lh3/bwa.git
-make
-export PATH="/PATH_TO_BWA/:$PATH"
 ```
 
 ### 2. Preparing data
