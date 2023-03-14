@@ -25,10 +25,11 @@ bash Anaconda3-2022.10-Linux-x86_64.sh
 ### 1. Setting up the environment
 
 We will use the Anaconda environment on the GSDS cluster. \
-It is already created on the GSDS cluster, but you can create the environment on your local machine with the following command:
+It is already created on the GSDS cluster, but you can create the environment on your local machine with the following command \
+In this session, OpenJDK, samtools, GATK and BWA are installed in creation of conda environment and Picard is downloaded as java package
 
 ```
-# Create conda environment and install softwares (OpenJDK, samtools, GATK, BWA)
+# Create conda environment and install softwares 
 conda create -n SEQ openjdk samtools gatk4 bwa -c anaconda -c bioconda
 conda activate SEQ
 
