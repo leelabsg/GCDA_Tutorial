@@ -174,9 +174,9 @@ SM=HG00096
 We can add read groups in `BAM` file by the following command:
 
 ```
-java -jar ~/GCDA/1_sequencing/utils/picard.jar AddOrReplaceReadGroups \
-I=fastq_to_bam.bam \
-O=add_read_groups.bam \
+java -jar picard.jar AddOrReplaceReadGroups \
+I=fastq_to_bam_96.bam \
+O=add_read_groups_96.bam \
 RGID=4 \
 RGLB=lib1 \
 RGPL=ILLUMINA \
@@ -189,18 +189,18 @@ RGSM=20
 Using `MarkIlluminaAdapters`, we can mark adapter sequences.
 
 ```
-java -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar MarkIlluminaAdapters \
-I=add_read_groups.bam \
-O=mark_adapter.bam \
-M=mark_adapter.metrics.txt
+java -Xmx8G -jar picard.jar MarkIlluminaAdapters \
+I=add_read_groups_96.bam \
+O=mark_adapter_96.bam \
+M=mark_adapter_96.metrics.txt
 ```
 
 #### Convert the preprocessed `BAM` file to a `FASTQ` file
 
 ```
-java -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar SamToFastq \
-I=mark_adapter.bam \
-FASTQ=fastq_input.fq \
+java -Xmx8G -jar picard.jar SamToFastq \
+I=mark_adapter_96.bam \
+FASTQ=fastq_input_96.fq \
 CLIPPING_ATTRIBUTE=XT \
 CLIPPING_ACTION=2 \
 INTERLEAVE=true \
@@ -214,7 +214,7 @@ NON_PF=true
 GATK's variant discovery workflow recommends Burrows-Wheeler Aligner's maximal exact matches (BWA-MEM) algorithm.
 
 ```
-bwa mem -M -t 7 -p ~/GCDA/1_sequencing/data/human_g1k_v37.fasta fastq_input.fq > aligned.sam
+bwa mem -M -t 7 -p human_g1k_v37.fasta fastq_input_96.fq > aligned_96.sam
 ```
 
 You can check the contents of the `SAM` file:
@@ -246,11 +246,11 @@ The information of some columns are as follows:
 #### Add information to `BAM` file using `MergeBamAlignment`
 
 ```
-java -Xmx16G -jar ~/GCDA/1_sequencing/utils/picard.jar MergeBamAlignment \
-R=~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
-UNMAPPED=add_read_groups.bam \
-ALIGNED=aligned.sam \
-O=preprocessed.bam \
+java -Xmx10G -jar picard.jar MergeBamAlignment \
+R=human_g1k_v37.fasta \
+UNMAPPED=add_read_groups_96.bam \
+ALIGNED=aligned_96.sam \
+O=preprocessed_96.bam \
 CREATE_INDEX=true \
 ADD_MATE_CIGAR=true \
 CLIP_ADAPTERS=false \
@@ -264,39 +264,39 @@ ATTRIBUTES_TO_RETAIN=XS
 #### Mark Duplicates
 
 ```
-java -jar ~/GCDA/1_sequencing/utils/picard.jar MarkDuplicates \
-I=preprocessed.bam \
-O=mark_dup.bam \
-M=mark_dup.metrics.txt
+java -jar picard.jar MarkDuplicates \
+I=preprocessed_96.bam \
+O=mark_dup_96.bam \
+M=mark_dup_96.metrics.txt
 ```
 
 #### Sort, index and convert alignment to a BAM using SortSam
 
 ```
-java -jar ~/GCDA/1_sequencing/utils/picard.jar SortSam \
-I=mark_dup.bam \
-O=sorted.bam \
+java -jar picard.jar SortSam \
+I=mark_dup_96.bam \
+O=sorted_96.bam \
 SO=coordinate 
 ```
 
 #### Create Recalibration Table using `BaseRecalibrator`
 
 ```
-gatk --java-options '-Xmx16g' BaseRecalibrator \
--I sorted.bam \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
---known-sites ~/GCDA/1_sequencing/data/ALL.wgs.mergedSV.v8.20130502.svs.genotypes.vcf.gz \
--O recal_data.table
+gatk --java-options '-Xmx10g' BaseRecalibrator \
+-I sorted_96.bam \
+-R human_g1k_v37.fasta \
+--known-sites ALL.wgs.mergedSV.v8.20130502.svs.genotypes.vcf.gz \
+-O recal_data_96.table
 ```
 
 #### Base Quality Score Recalibration (BQSR)
 
 ```
-gatk --java-options '-Xmx16g' ApplyBQSR \
--I sorted.bam \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
---bqsr-recal-file recal_data.table \
--O bqsr.bam
+gatk --java-options '-Xmx10g' ApplyBQSR \
+-I sorted_96.bam \
+-R human_g1k_v37.fasta \
+--bqsr-recal-file recal_data_96.table \
+-O bqsr_96.bam
 ```
 
 #### IGV Viewer (Software for visualization of `BAM` file)
@@ -358,7 +358,7 @@ gatk CombineGVCFs \
 
 ```
 gatk --java-options "-Xmx4g" GenotypeGVCFs \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
+-R human_g1k_v37.fasta \
 -V sample_all.g.vcf.gz \
 -O sample_all.vcf
 ```
