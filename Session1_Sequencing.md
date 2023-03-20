@@ -30,8 +30,14 @@ In this session, OpenJDK, samtools, GATK and BWA are installed in creation of co
 
 ```
 # Create conda environment and install softwares 
-conda create -n SEQ java-1.7.0-openjdk-cos6-x86_64 samtools gatk4 bwa -c anaconda -c bioconda
+conda create -n SEQ samtools gatk4 bwa -c anaconda -c bioconda
 conda activate SEQ
+
+# Install jdk 17 version (Required after picard 3.0.0)
+wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
+tar xvf openjdk-17.0.2_linux-x64_bin.tar.gz
+export JAVA_HOME=[PATH_TO_JDK]/jdk-17.0.2/
+export HOME=$HOME:$JAVA_HOME/bin
 
 # Download Picard (Find Latest Release: https://github.com/broadinstitute/picard/releases/latest)
 wget https://github.com/broadinstitute/picard/releases/download/3.0.0/picard.jar
@@ -78,8 +84,15 @@ And we need a sequence read file (`FASTQ`) for the sample individual (HG00096).
 
 ```
 # Download sequence read file
+# sample HG00096
 wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00096/sequence_read/SRR062634.filt.fastq.gz
 gzip -d SRR062634.filt.fastq.gz
+# sample HG00097
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00097/sequence_read/SRR741384.filt.fastq.gz
+gzip -d SRR741384.filt.fastq.gz
+# sample HG00099
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00099/sequence_read/SRR741411.filt.fastq.gz
+gzip -d SRR741411.filt.fastq.gz
 ```
 
 We can check the contents of the `FASTQ` file by `head` command, and you will see the following:
@@ -150,9 +163,9 @@ This practice session consists of 4 steps.
 Using `FastqToSam` function of Picard, we can convert the `FASTQ` file to an unmapped `BAM` file.
 
 ```
-java -jar ~/GCDA/1_sequencing/utils/picard.jar FastqToSam \
-F1=~/GCDA/1_sequencing/data/SRR062634.filt.fastq \
-O=fastq_to_bam.bam \
+java -jar picard.jar \
+F1=SRR062634.filt.fastq \
+O=fastq_to_bam_96.bam \
 SM=HG00096
 ```
 
