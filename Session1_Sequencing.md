@@ -304,20 +304,27 @@ gatk --java-options '-Xmx10g' ApplyBQSR \
 We can visualize the aligned `BAM` file with the [IGV viewer](https://software.broadinstitute.org/software/igv/home).
 
 For example, we can observe high coverage around SUMO1P1 gene. (`HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam`)
+```
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00096/exome_alignment/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00096/exome_alignment/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam.bai
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00097/exome_alignment/HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00097/exome_alignment/HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam.bai
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00099/exome_alignment/HG00099.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam
+wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00099/exome_alignment/HG00099.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam.bai
+```
 
 ### 6. Converting `BAM` to `GVCF`
 
 #### Convert the individual `BAM` files to `GVCF` files
 
 In this section, we will use the real data of 3 individuals in 1000 Genome Project (`HG00096`, `HG00097`, `HG00099`). \
-The aligned `BAM` files of them can be found at `~/GCDA/1_sequencing/data/` folder. \
 We can convert these `BAM` files to `GVCF` files.
 
 ```
 # Convert BAM for the first individual
 gatk --java-options "-Xms4g" HaplotypeCaller \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
--I ~/GCDA/1_sequencing/data/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam \
+-R human_g1k_v37.fasta \
+-I HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam \
 -L 20 \
 -ERC GVCF \
 -O sample01_20.g.vcf
@@ -326,8 +333,8 @@ gatk --java-options "-Xms4g" HaplotypeCaller \
 ```
 # Convert BAM for the second individual
 gatk --java-options "-Xms4g" HaplotypeCaller \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
--I ~/GCDA/1_sequencing/data/HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
+-R human_g1k_v37.fasta \
+-I HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
 -L 20 \
 -ERC GVCF \
 -O sample02_20.g.vcf
@@ -336,8 +343,8 @@ gatk --java-options "-Xms4g" HaplotypeCaller \
 ```
 # Convert BAM for the third individual
 gatk --java-options "-Xms4g" HaplotypeCaller \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
--I ~/GCDA/1_sequencing/data/HG00099.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
+-R human_g1k_v37.fasta \
+-I HG00099.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
 -L 20 \
 -ERC GVCF \
 -O sample03_20.g.vcf
