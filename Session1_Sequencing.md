@@ -30,7 +30,7 @@ In this session, OpenJDK, samtools, GATK and BWA are installed in creation of co
 
 ```
 # Create conda environment and install softwares 
-conda create -n SEQ openjdk samtools gatk4 bwa -c anaconda -c bioconda
+conda create -n SEQ java-1.7.0-openjdk-cos6-x86_64 samtools gatk4 bwa -c anaconda -c bioconda
 conda activate SEQ
 
 # Download Picard (Find Latest Release: https://github.com/broadinstitute/picard/releases/latest)
