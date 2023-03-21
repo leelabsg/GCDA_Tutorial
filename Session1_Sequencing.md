@@ -385,29 +385,4 @@ You can check the contents of the final `VCF` file.
 
 We use this `VCF` file in the analysis!
 
-### 8. Deepvariant via docker (Optional) 
-Deepvariant is deep-learning based variant calling software which gained popularity for large-scale sequence files. This section is based on its quickguide: https://github.com/google/deepvariant/blob/r1.5/docs/deepvariant-quick-start.md 
-```
-# You can install docker with https://docs.docker.com/engine/install/ubuntu/
-# start docker and pull deepvariant
-sudo service docker start
-BIN_VERSION="1.5.0"
-sudo docker pull google/deepvariant:"${BIN_VERSION}"
-```
 
-```
-# one-line command of Deepvariant
-sudo docker run \
-  -v "${INPUT_DIR}":"/input" \
-  -v "${OUTPUT_DIR}":"/output" \
-  google/deepvariant:"${BIN_VERSION}" \
-  /opt/deepvariant/bin/run_deepvariant \
-  --model_type=WGS \ **Replace this string with exactly one of the following [WGS,WES,PACBIO,ONT_R104,HYBRID_PACBIO_ILLUMINA]**
-  --ref=/input/ucsc.hg19.chr20.unittest.fasta \
-  --reads=/input/NA12878_S1.chr20.10_10p1mb.bam \
-  --regions "chr20:10,000,000-10,010,000" \
-  --output_vcf=/output/output.vcf.gz \
-  --output_gvcf=/output/output.g.vcf.gz \
-  --intermediate_results_dir /output/intermediate_results_dir \ **This flag is optional. Set to keep the intermediate results.
-  --num_shards=1 **How many cores the `make_examples` step uses. Change it to the number of CPU cores you have.**
-```
