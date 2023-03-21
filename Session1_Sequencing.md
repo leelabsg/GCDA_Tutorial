@@ -354,7 +354,7 @@ gatk --java-options "-Xms4g" HaplotypeCaller \
 
 ```
 gatk CombineGVCFs \
--R ~/GCDA/1_sequencing/data/human_g1k_v37.fasta \
+-R human_g1k_v37.fasta \
 --variant sample01_20.g.vcf \
 --variant sample02_20.g.vcf \
 --variant sample03_20.g.vcf \
