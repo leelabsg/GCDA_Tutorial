@@ -1,2 +1,2 @@
-# 2023 Genomic & Clinical Data Analysis  
-## This repository includes practice session 
+# Genomic & Clinical Data Analysis (2023 Spring) 
+This repository is built for practice session of GCDA
