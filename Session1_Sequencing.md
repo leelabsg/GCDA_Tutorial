@@ -26,8 +26,8 @@ bash Anaconda3-2022.10-Linux-x86_64.sh
 
 We will use the Anaconda environment on the GSDS cluster. \
 It is already created on the GSDS cluster, but you can create the environment on your local machine with the following command \
-In this session, OpenJDK, samtools, GATK and BWA are installed in creation of conda environment and Picard is downloaded as java package
-
+In this session, OpenJDK, samtools, GATK and BWA are installed in creation of conda environment and Picard is downloaded as java package \
+All files and tools are included in '~/GCDA/1_sequencing/' folder
 ```
 # Create conda environment and install softwares 
 conda create -n SEQ samtools gatk4 bwa -c anaconda -c bioconda
@@ -37,9 +37,10 @@ conda activate SEQ
 wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
 tar xvf openjdk-17.0.2_linux-x64_bin.tar.gz
 export JAVA_HOME=[PATH_TO_JDK]/jdk-17.0.2/
-export HOME=$HOME:$JAVA_HOME/bin
+export PATH=$JAVA_HOME/bin:$PATH
 
 # Download Picard (Find Latest Release: https://github.com/broadinstitute/picard/releases/latest)
+cd ~/GCDA/1_sequencing/utils
 wget https://github.com/broadinstitute/picard/releases/download/3.0.0/picard.jar
 
 ```
@@ -51,6 +52,7 @@ Here, we will use the `FASTA` file of 1000 Genome Phase 3 (GRCh37 build) and the
 You can browse FTP server (ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/) of 1000 Genome Project.
 
 ```
+cd ~/GCDA/1_sequencing/reference
 # Download 1000 Genome reference panel
 wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/human_g1k_v37.fasta.gz
 gzip -d human_g1k_v37.fasta.gz
@@ -83,6 +85,7 @@ bwa index -a bwtsw human_g1k_v37.fasta
 And we need a sequence read file (`FASTQ`) for the sample individual (HG00096).
 
 ```
+cd ~/GCDA/1_sequencing/raw_reads
 # Download sequence read file
 # sample HG00096
 wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00096/sequence_read/SRR062634.filt.fastq.gz
@@ -163,10 +166,11 @@ This practice session consists of 4 steps.
 Using `FastqToSam` function of Picard, we can convert the `FASTQ` file to an unmapped `BAM` file.
 
 ```
-java -jar picard.jar \
-F1=SRR062634.filt.fastq \
-O=fastq_to_bam_96.bam \
-SM=HG00096
+SID=HG00096
+java -jar ~/GCDA/1_sequencing/utils/picard.jar FastqToSam \
+F1=~/GCDA/1_sequencing/raw_reads/SRR062634.filt.fastq \
+O=~/GCDA/1_sequencing/data/fastq_to_bam_${SID}.bam \
+SM=${SID}
 ```
 
 #### Add read group information in `BAM` file
@@ -174,9 +178,10 @@ SM=HG00096
 We can add read groups in `BAM` file by the following command:
 
 ```
-java -jar picard.jar AddOrReplaceReadGroups \
-I=fastq_to_bam_96.bam \
-O=add_read_groups_96.bam \
+cd ~/GCDA/1_sequencing/data/
+java -jar ~/GCDA/1_sequencing/utils/picard.jar AddOrReplaceReadGroups \
+I=fastq_to_bam_${SID}.bam \
+O=add_read_groups_${SID}.bam \
 RGID=4 \
 RGLB=lib1 \
 RGPL=ILLUMINA \
@@ -189,18 +194,18 @@ RGSM=20
 Using `MarkIlluminaAdapters`, we can mark adapter sequences.
 
 ```
-java -Xmx8G -jar picard.jar MarkIlluminaAdapters \
-I=add_read_groups_96.bam \
-O=mark_adapter_96.bam \
-M=mark_adapter_96.metrics.txt
+java -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar MarkIlluminaAdapters \
+I=add_read_groups_${SID}.bam \
+O=mark_adapter_${SID}.bam \
+M=mark_adapter_${SID}.metrics.txt
 ```
 
 #### Convert the preprocessed `BAM` file to a `FASTQ` file
 
 ```
-java -Xmx8G -jar picard.jar SamToFastq \
-I=mark_adapter_96.bam \
-FASTQ=fastq_input_96.fq \
+java -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar SamToFastq \
+I=mark_adapter_${SID}.bam \
+FASTQ=fastq_input_${SID}.fq \
 CLIPPING_ATTRIBUTE=XT \
 CLIPPING_ACTION=2 \
 INTERLEAVE=true \
@@ -214,7 +219,7 @@ NON_PF=true
 GATK's variant discovery workflow recommends Burrows-Wheeler Aligner's maximal exact matches (BWA-MEM) algorithm.
 
 ```
-bwa mem -M -t 7 -p human_g1k_v37.fasta fastq_input_96.fq > aligned_96.sam
+bwa mem -M -t 7 -p ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta ~/GCDA/1_sequencing/data/fastq_input_${SID}.fq > aligned_${SID}.sam
 ```
 
 You can check the contents of the `SAM` file:
@@ -246,11 +251,11 @@ The information of some columns are as follows:
 #### Add information to `BAM` file using `MergeBamAlignment`
 
 ```
-java -Xmx10G -jar picard.jar MergeBamAlignment \
-R=human_g1k_v37.fasta \
-UNMAPPED=add_read_groups_96.bam \
-ALIGNED=aligned_96.sam \
-O=preprocessed_96.bam \
+java -Xmx10G -jar ~/GCDA/1_sequencing/utils/picard.jar MergeBamAlignment \
+R=~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
+UNMAPPED=add_read_groups_${SID}.bam \
+ALIGNED=aligned_${SID}.sam \
+O=preprocessed_${SID}.bam \
 CREATE_INDEX=true \
 ADD_MATE_CIGAR=true \
 CLIP_ADAPTERS=false \
@@ -264,18 +269,18 @@ ATTRIBUTES_TO_RETAIN=XS
 #### Mark Duplicates
 
 ```
-java -jar picard.jar MarkDuplicates \
-I=preprocessed_96.bam \
-O=mark_dup_96.bam \
-M=mark_dup_96.metrics.txt
+java -jar ~/GCDA/1_sequencing/utils/picard.jar MarkDuplicates \
+I=preprocessed_${SID}.bam \
+O=mark_dup_${SID}.bam \
+M=mark_dup_${SID}.metrics.txt
 ```
 
 #### Sort, index and convert alignment to a BAM using SortSam
 
 ```
-java -jar picard.jar SortSam \
-I=mark_dup_96.bam \
-O=sorted_96.bam \
+java -jar ~/GCDA/1_sequencing/utils/picard.jar SortSam \
+I=mark_dup_${SID}.bam \
+O=sorted_${SID}.bam \
 SO=coordinate 
 ```
 
@@ -283,20 +288,20 @@ SO=coordinate
 
 ```
 gatk --java-options '-Xmx10g' BaseRecalibrator \
--I sorted_96.bam \
--R human_g1k_v37.fasta \
---known-sites ALL.wgs.mergedSV.v8.20130502.svs.genotypes.vcf.gz \
--O recal_data_96.table
+-I sorted_${SID}.bam \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
+--known-sites ~/GCDA/1_sequencing/reference/ALL.wgs.mergedSV.v8.20130502.svs.genotypes.vcf.gz \
+-O recal_data_${SID}.table
 ```
 
 #### Base Quality Score Recalibration (BQSR)
 
 ```
 gatk --java-options '-Xmx10g' ApplyBQSR \
--I sorted_96.bam \
--R human_g1k_v37.fasta \
---bqsr-recal-file recal_data_96.table \
--O bqsr_96.bam
+-I sorted_${SID}.bam \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
+--bqsr-recal-file recal_data_${SID}.table \
+-O bqsr_${SID}.bam
 ```
 
 #### IGV Viewer (Software for visualization of `BAM` file)
@@ -305,6 +310,7 @@ We can visualize the aligned `BAM` file with the [IGV viewer](https://software.b
 
 For example, we can observe high coverage around SUMO1P1 gene. (`HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam`)
 ```
+cd ~/GCDA/1_sequencing/raw_reads
 wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00096/exome_alignment/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam
 wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00096/exome_alignment/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam.bai
 wget http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/HG00097/exome_alignment/HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam
@@ -321,10 +327,11 @@ In this section, we will use the real data of 3 individuals in 1000 Genome Proje
 We can convert these `BAM` files to `GVCF` files.
 
 ```
+cd ~/GCDA/1_sequencing/data
 # Convert BAM for the first individual
 gatk --java-options "-Xms4g" HaplotypeCaller \
--R human_g1k_v37.fasta \
--I HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
+-I ~/GCDA/1_sequencing/raw_reads/HG00096.chrom20.ILLUMINA.bwa.GBR.exome.20120522.bam \
 -L 20 \
 -ERC GVCF \
 -O sample01_20.g.vcf
@@ -333,8 +340,8 @@ gatk --java-options "-Xms4g" HaplotypeCaller \
 ```
 # Convert BAM for the second individual
 gatk --java-options "-Xms4g" HaplotypeCaller \
--R human_g1k_v37.fasta \
--I HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
+-I ~/GCDA/1_sequencing/raw_reads/HG00097.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
 -L 20 \
 -ERC GVCF \
 -O sample02_20.g.vcf
@@ -343,8 +350,8 @@ gatk --java-options "-Xms4g" HaplotypeCaller \
 ```
 # Convert BAM for the third individual
 gatk --java-options "-Xms4g" HaplotypeCaller \
--R human_g1k_v37.fasta \
--I HG00099.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
+-I ~/GCDA/1_sequencing/raw_reads/HG00099.chrom20.ILLUMINA.bwa.GBR.exome.20130415.bam \
 -L 20 \
 -ERC GVCF \
 -O sample03_20.g.vcf
@@ -354,7 +361,7 @@ gatk --java-options "-Xms4g" HaplotypeCaller \
 
 ```
 gatk CombineGVCFs \
--R human_g1k_v37.fasta \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
 --variant sample01_20.g.vcf \
 --variant sample02_20.g.vcf \
 --variant sample03_20.g.vcf \
@@ -365,7 +372,7 @@ gatk CombineGVCFs \
 
 ```
 gatk --java-options "-Xmx4g" GenotypeGVCFs \
--R human_g1k_v37.fasta \
+-R ~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
 -V sample_all.g.vcf.gz \
 -O sample_all.vcf
 ```
