@@ -239,7 +239,7 @@ SRR062634.10000906	0	5	97444533	60	100M	*	0	0	CAGTTTGATCCTTCTGAATTAGATTTTCCATACA
 ```
 
 The header section must be prior to the alignment section if it is present. Headings begin with the '@' symbol, which distinguishes them from the alignment section. \
-Alignment sections have 11 mandatory fields, as well as a variable number of optional fields. (samfile explained: https://samtools.github.io/hts-specs/SAMv1.pdf)
+Alignment sections have 11 mandatory fields, as well as a variable number of optional fields. (SAM format explained: https://samtools.github.io/hts-specs/SAMv1.pdf)
 
 The information of some columns are as follows:
 
