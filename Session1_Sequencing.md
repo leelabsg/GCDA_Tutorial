@@ -20,6 +20,12 @@ wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
 bash Anaconda3-2022.10-Linux-x86_64.sh
 
 ```
+### Access GSDS cluster computational server via leelabguest account
+```
+ID : leelabguest
+PW : NGspMurwzsccNfPA
+```
+
 ### 1. Setting up the environment
 
 We will use the Anaconda environment on the GSDS cluster. \
