@@ -1,7 +1,7 @@
 # Practice Session #1: Sequencing (March 23, 2023)
 
 In this session, we will learn how to convert raw unmapped read files (`FASTQ`) to analysis-ready files (`VCF`). \
-The overall process in this session is based on the [GATK Best Practice](https://gatk.broadinstitute.org/hc/en-us/categories/360002302312-Getting-Started). \
+The overall process in this session is mainly based on the [GATK Best Practice](https://gatk.broadinstitute.org/hc/en-us/categories/360002302312-Getting-Started). \
 This document was created on March 23, 2023 and the following contents were tested on local WSL (Ubuntu 22.04.1 LTS) + Leelab Server.
 ### 0. Installing Linux and Anaconda in Windows
 Using Linux has become easy in Windows with WSL. \
@@ -390,4 +390,8 @@ You can check the contents of the final `VCF` file.
 
 We use this `VCF` file in the analysis!
 
+### 8. Variant Calling with Deepvariant (Optional) 
+DeepVariant is a deep learning-based variant caller that takes aligned reads (in BAM or CRAM format), produces pileup image tensors from them, classifies each tensor using a convolutional neural network, and finally reports the results in a standard VCF or gVCF file. (https://github.com/google/deepvariant)
 
+The simple concept of Deepvariant is explained and visualized in following post:
+[Looking Through DeepVariant's Eyes](https://google.github.io/deepvariant/posts/2020-02-20-looking-through-deepvariants-eyes/)
