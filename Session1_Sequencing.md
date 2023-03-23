@@ -154,9 +154,9 @@ This practice session consists of 4 steps.
 2) Convert `FASTQ` to `BAM`
  * Map `FASTQ` file to reference with `bwa mem`
  * `MergeBamAlignment`
- * `MarkDuplicates`
+ * [`MarkDuplicates`](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-)
  * `SortSam`
- * Base Quality Score Recalibration (`BaseRecalibrator`)
+ * [Base Quality Score Recalibration](https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR-) (`BaseRecalibrator`)
  * `ApplyBQSR`
 3) Convert `BAM` to `GVCF`
  * `HaplotypeCaller`
