@@ -153,7 +153,7 @@ This practice session consists of 4 steps.
  * `SamToFastq`
 2) Convert `FASTQ` to `BAM`
  * Map `FASTQ` file to reference with `bwa mem`
- * `MergeBamAlignment`
+ * Merge bam with index alignment (`MergeBamAlignment`)
  * [`MarkDuplicates`](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-)
  * `SortSam`
  * [Base Quality Score Recalibration](https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR-) (`BaseRecalibrator`)
