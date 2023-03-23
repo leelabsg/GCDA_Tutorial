@@ -23,7 +23,6 @@ bash Anaconda3-2022.10-Linux-x86_64.sh
 ### Access GSDS cluster computational server via leelabguest account
 ```
 ID : leelabguest
-PW : NGspMurwzsccNfPA
 ```
 
 ### 1. Setting up the environment
@@ -34,15 +33,18 @@ In this session, OpenJDK, samtools, GATK and BWA are installed in creation of co
 All files and tools are included in '~/GCDA/1_sequencing/' folder
 ```
 # Create conda environment and install softwares 
-conda create -n SEQ samtools gatk4 bwa -c anaconda -c bioconda
+conda create -n SEQ samtools bwa -c anaconda -c bioconda
 conda activate SEQ
 
 # Install jdk 17 version (Required after picard 3.0.0)
 wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
 tar xvf openjdk-17.0.2_linux-x64_bin.tar.gz
-export JAVA_HOME=[PATH_TO_JDK]/jdk-17.0.2/
+export JAVA_HOME=$JAVA_HOME/:~/jdk-17.0.2/
 export PATH=$JAVA_HOME/bin:$PATH
+alias java17="~/jdk-17.0.2/bin/java"
 
+# install gatk4 
+conda install jatk4 -c bioconda
 # Download Picard (Find Latest Release: https://github.com/broadinstitute/picard/releases/latest)
 cd ~/GCDA/1_sequencing/utils
 wget https://github.com/broadinstitute/picard/releases/download/3.0.0/picard.jar
@@ -171,7 +173,7 @@ Using `FastqToSam` function of Picard, we can convert the `FASTQ` file to an unm
 
 ```
 SID=HG00096
-java -jar ~/GCDA/1_sequencing/utils/picard.jar FastqToSam \
+java17 -jar ~/GCDA/1_sequencing/utils/picard.jar FastqToSam \
 F1=~/GCDA/1_sequencing/raw_reads/SRR062634.filt.fastq \
 O=~/GCDA/1_sequencing/data/fastq_to_bam_${SID}.bam \
 SM=${SID}
@@ -183,7 +185,7 @@ We can add read groups in `BAM` file by the following command:
 
 ```
 cd ~/GCDA/1_sequencing/data/
-java -jar ~/GCDA/1_sequencing/utils/picard.jar AddOrReplaceReadGroups \
+java17 -jar ~/GCDA/1_sequencing/utils/picard.jar AddOrReplaceReadGroups \
 I=fastq_to_bam_${SID}.bam \
 O=add_read_groups_${SID}.bam \
 RGID=4 \
@@ -198,7 +200,7 @@ RGSM=20
 Using `MarkIlluminaAdapters`, we can mark adapter sequences.
 
 ```
-java -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar MarkIlluminaAdapters \
+java17 -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar MarkIlluminaAdapters \
 I=add_read_groups_${SID}.bam \
 O=mark_adapter_${SID}.bam \
 M=mark_adapter_${SID}.metrics.txt
@@ -207,7 +209,7 @@ M=mark_adapter_${SID}.metrics.txt
 #### Convert the preprocessed `BAM` file to a `FASTQ` file
 
 ```
-java -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar SamToFastq \
+java17 -Xmx8G -jar ~/GCDA/1_sequencing/utils/picard.jar SamToFastq \
 I=mark_adapter_${SID}.bam \
 FASTQ=fastq_input_${SID}.fq \
 CLIPPING_ATTRIBUTE=XT \
@@ -255,7 +257,7 @@ The information of some columns are as follows:
 #### Add information to `BAM` file using `MergeBamAlignment`
 
 ```
-java -Xmx10G -jar ~/GCDA/1_sequencing/utils/picard.jar MergeBamAlignment \
+java17 -Xmx10G -jar ~/GCDA/1_sequencing/utils/picard.jar MergeBamAlignment \
 R=~/GCDA/1_sequencing/reference/human_g1k_v37.fasta \
 UNMAPPED=add_read_groups_${SID}.bam \
 ALIGNED=aligned_${SID}.sam \
@@ -273,7 +275,7 @@ ATTRIBUTES_TO_RETAIN=XS
 #### Mark Duplicates
 
 ```
-java -jar ~/GCDA/1_sequencing/utils/picard.jar MarkDuplicates \
+java17 -jar ~/GCDA/1_sequencing/utils/picard.jar MarkDuplicates \
 I=preprocessed_${SID}.bam \
 O=mark_dup_${SID}.bam \
 M=mark_dup_${SID}.metrics.txt
@@ -282,7 +284,7 @@ M=mark_dup_${SID}.metrics.txt
 #### Sort, index and convert alignment to a BAM using SortSam
 
 ```
-java -jar ~/GCDA/1_sequencing/utils/picard.jar SortSam \
+java17 -jar ~/GCDA/1_sequencing/utils/picard.jar SortSam \
 I=mark_dup_${SID}.bam \
 O=sorted_${SID}.bam \
 SO=coordinate 
