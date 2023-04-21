@@ -8,3 +8,6 @@ TA : Seokho Jeong (seokho92@snu.ac.kr)
 
 ### Session 2 - [GWAS](./Session2_GWAS.md)
 TA : Kisung Nam (kisung.nam@snu.ac.kr)
+
+### Session 3 - [PRS]()  
+TA : Na Yeon Kim (nayeonkim1@snu.ac.kr)
