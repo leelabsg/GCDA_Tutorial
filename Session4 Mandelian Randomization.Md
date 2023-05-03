@@ -2,11 +2,11 @@
 In this session, we will learn how to perform two Sample MR with publicly available GWAS datasets. \
 The overall process in this session is mainly based on the [TwoSampleMR in R vignette](https://mrcieu.github.io/TwoSampleMR/). \
 This document was created on May 2, 2023 and the following contents were tested on GSDS Cluster.
-## Assignment 3 Notice (Due 18th 11:59 pm)
+## Assignment 3 Notice (Due 18th 11:59 pm) 
+[HW3.pdf](https://github.com/leelabsg/GCDA_Tutorial/files/11380912/HW3.pdf)
 
 #### PRS construction
 While constructing prs, please use leelabsg11 via ssh. 
-Additionally, leelabsg10 will be open on 18th only.
 
 #### Two Sample MR
 
