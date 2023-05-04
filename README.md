@@ -9,5 +9,8 @@ TA : Seokho Jeong (seokho92@snu.ac.kr)
 ### Session 2 - [GWAS](./Session2_GWAS.md)
 TA : Kisung Nam (kisung.nam@snu.ac.kr)
 
-### Session 3 - [PRS]()  
+### Session 3 - [PRS](./Session3_PRS.md)  
 TA : Na Yeon Kim (nayeonkim1@snu.ac.kr)
+
+### Session 3 - [PRS](./Session4\ Mandelian\ Randomization.Md)  
+TA : Seokho Jeong (seokho92@snu.ac.kr)
