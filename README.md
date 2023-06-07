@@ -15,5 +15,5 @@ TA : Na Yeon Kim (nayeonkim1@snu.ac.kr)
 ### Session 4 - [Mandelian Randomization](https://github.com/leelabsg/GCDA_Tutorial/blob/6c640a509182d76e34a60c64f67cf20ed467b71b/Session4%20Mandelian%20Randomization.Md)  
 TA : Seokho Jeong (seokho92@snu.ac.kr)
 
-### Session 6 - [Medical Image Anaylsus](https://github.com/leelabsg/GCDA_Tutorial/tree/main/Session6_Medical%20Image%20Analysis)  
+### Session 6 - [Medical Image Anaylsis](https://github.com/leelabsg/GCDA_Tutorial/tree/main/Session6_Medical%20Image%20Analysis)  
 TA : Wonyoung Jang (jwy4888@snu.ac.kr)
